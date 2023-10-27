@@ -58,8 +58,8 @@ export default function Home() {
         {
           logs?.docs?.sort((obj1, obj2) => {
             return obj1.data().timestamp - obj2.data().timestamp
-          }).reverse().map(data => {
-            return <p className={styles.log}>
+          }).reverse().map((data, id) => {
+            return <p key={id} className={styles.log}>
             {data?.data().output[0]}
           </p>
           })
