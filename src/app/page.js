@@ -55,6 +55,7 @@ export default function Home() {
 
         <input onKeyDown={submit} value={command} className={styles.beef} onChange={(event) => setCommand(event.target.value)} type="text" name="name" placeholder='command' disabled={disabled} />
 
+        <div className={styles.logContainer}>
         {
           logs?.docs?.sort((obj1, obj2) => {
             return obj1.data().timestamp - obj2.data().timestamp
@@ -64,6 +65,8 @@ export default function Home() {
           </p>
           })
         }
+        </div>
+        
 
       </div>
     </main>
