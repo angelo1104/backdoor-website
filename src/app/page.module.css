@@ -8,9 +8,9 @@
 }
 
 .description {
-  display: inherit;
-  justify-content: inherit;
-  align-items: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   font-size: 0.85rem;
   max-width: var(--max-width);
   width: 100%;
@@ -27,7 +27,6 @@
 
 .description p {
   position: relative;
-  margin: 0;
   padding: 1rem;
   background-color: rgba(var(--callout-rgb), 0.5);
   border: 1px solid rgba(var(--callout-border-rgb), 0.3);
@@ -226,4 +225,30 @@
   to {
     transform: rotate(0deg);
   }
+}
+
+
+.connected {
+  display: flex;
+  flex-direction: row-reverse;
+  width: 100%;
+}
+
+.log {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.beef {
+  padding: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  outline: none;
+  align-items: center;
+    inset: 0 0 auto;
+    border-radius: 10px;
+    border: 10px blue;
+    background-color: #242222;
+    background-clip: padding-box;
+    backdrop-filter: blur(24px);
 }
